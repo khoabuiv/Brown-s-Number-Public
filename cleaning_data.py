@@ -14,11 +14,12 @@ f.write("name,position,record,team,year\n")
 
 for i in preclean_data_df.index:
     coaches_data = preclean_data_df.loc[i,'Data'] = preclean_data_df.loc[i,'Data'].strip("{}")
-    Data = re.split(r', (?=(?:"[^"]*?(?: [^"]*)*))|, (?=[^",]+(?:,|$))', coaches_data)
+    matches = re.findall(r'(?:"([^"]*)"|([^,]+))(?:,|$)', coaches_data)
+    Data = [match[0] or match[1] for match in matches]
     team = preclean_data_df.loc[i,'Team']
     year = preclean_data_df.loc[i,'Year']
-    for j in Data:
-        string = j.replace("\"", "")
+    for j in Data: 
+        string = j.replace(" \"", "")
         if re.match(r"^Coach:\\n", string):
             match = re.search(r"Coach:\\n(.+?)\s\((\d+-\d+-\d+)\)", j)
             coach_name = match.group(1)
